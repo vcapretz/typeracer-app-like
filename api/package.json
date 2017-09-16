@@ -1,0 +1,45 @@
+{
+  "name": "typeracer-api",
+  "version": "0.0.1",
+  "description": "TypeRacer API - creates server with Koa and socket ",
+  "main": "index.js",
+  "scripts": {
+    "test": "npm run lint",
+    "start": "nodemon index.js",
+    "lint": "eslint ."
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/vcapretz/typeracer-app-like.git"
+  },
+  "keywords": [
+    "node",
+    "koa",
+    "socket"
+  ],
+  "author": "vcapretz",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/vcapretz/typeracer-app-like/issues"
+  },
+  "homepage": "https://github.com/vcapretz/typeracer-app-like#readme",
+  "dependencies": {
+    "faker": "^4.1.0",
+    "kcors": "^2.2.1",
+    "koa": "^2.3.0",
+    "koa-bodyparser": "^4.2.0",
+    "koa-logger": "^3.0.1",
+    "koa-router": "^7.2.1",
+    "moment": "^2.18.1",
+    "socket.io": "^2.0.3"
+  },
+  "devDependencies": {
+    "eslint": "^4.7.0",
+    "eslint-config-airbnb": "^15.1.0",
+    "eslint-config-airbnb-base": "^12.0.0",
+    "eslint-plugin-import": "^2.7.0",
+    "eslint-plugin-jsx-a11y": "^6.0.2",
+    "eslint-plugin-react": "^7.3.0",
+    "nodemon": "^1.12.1"
+  }
+}
