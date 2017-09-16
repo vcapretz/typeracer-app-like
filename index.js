@@ -2,8 +2,6 @@
 
 const express = require('express');
 const bodyParser = require('body-parser');
-const faker = require('faker');
-const moment = require('moment');
 
 const app = express();
 
@@ -12,75 +10,44 @@ const server = app.listen(3000, () => {
 });
 
 const io = require('socket.io')(server);
+const env = process.env.NODE_ENV || 'development';
 
-const roomsInfo = {};
-const maxWordsPerGame = 100;
+const room = require('./routes/room');
+const helpers = require('./helpers');
 
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.static('static'));
 
-function onConnection(socket) {
-    console.log('connected to socket');
+io.on('connection', helpers.handleConnection(io));
 
-    socket.on('enter room', (roomname) => {
-        if (socket.room && socket.room !== roomname) {
-            socket.leave(socket.room);
-        }
-
-        socket.join(roomname);
-        io.to(roomname).emit('user entered room', roomsInfo[roomname]);
-    });
-
-    socket.on('disconnect', () => {
-        console.log('disconnected');
-    });
-}
-
-io.on('connection', onConnection);
+app.use((req, res, next) => {
+    res.io = io;
+    next();
+});
 
 app.get('/', (req, res) => {
     res.sendFile(`${__dirname}/views/index.html`);
 });
 
-app.get('/room/:roomname/user/:username', (req, res) => {
-    const { roomname, username } = req.params;
+app.use('/room', room);
 
-    if (!roomsInfo[roomname]) {
-        roomsInfo[roomname] = {
-            roomname,
-            users: [],
-            text: faker.random.words(Math.random() * maxWordsPerGame),
-            ranking: [],
-            created_at: moment()
-        };
-    }
+if (env === 'development') {
+    app.use((err, req, res, next) => {
+        res.status(err.status || 500);
 
-    if (roomsInfo[roomname].users.indexOf(username) !== -1) {
-        return res.status(403).json(`user ${username} already joined ${roomname}`);
-    }
+        res.render('error', {
+            message: err.message,
+            error: err
+        });
+    });
+}
 
-    roomsInfo[roomname].users.push({ username });
-    io.emit('requested join room', roomname);
+// on production do not leak stacktrace
+app.use((err, req, res, next) => {
+    res.status(err.status || 500);
 
-    res.json(`entered room ${roomname}`);
-});
-
-app.get('/room/:roomname/status', (req, res) => {
-    const { roomname } = req.params;
-
-    if (!roomsInfo[roomname]) {
-        return res.status(404).json(`room ${roomname} do not exists ):`);
-    }
-
-    const currentTime = moment();
-    const secondsToRoomCreated = currentTime.diff(roomsInfo[roomname].created_at, 'seconds');
-
-    res.json({
-        active_users: roomsInfo[roomname].users.length,
-        keystrokes: 1,
-        active_since: secondsToRoomCreated,
-        below_mean: 4,
-        ranking: roomsInfo[roomname].ranking,
-        last_minute_lead: 10,
+    res.render('error', {
+        message: err.message,
+        error: {}
     });
 });
