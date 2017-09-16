@@ -21,6 +21,10 @@ function onConnection(socket) {
     console.log('connected to socket');
 
     socket.on('enter room', (roomname) => {
+        if (socket.room && socket.room !== roomname) {
+            socket.leave(socket.room);
+        }
+
         socket.join(roomname);
     });
 
