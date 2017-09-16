@@ -6,7 +6,7 @@
   "scripts": {
     "test": "npm run lint && jest --coverage",
     "start": "node index.js",
-    "wach": "nodemon index.js",
+    "watch": "nodemon index.js",
     "lint": "eslint --ignore-path ../.gitignore ."
   },
   "repository": {
