@@ -3,10 +3,8 @@ const faker = require('faker');
 const moment = require('moment');
 
 const roomsUtils = require('../utils/rooms-utils');
-const ioUtils = require('../utils/io-utils');
 
 const { roomsInfo, maxWordsPerGame } = roomsUtils;
-const { io } = ioUtils;
 
 /**
  * join  - Returns JSON for room information
@@ -27,11 +25,14 @@ exports.join = async (ctx, next) => {
         }
 
         if (roomsInfo[roomname].users.find(user => user.username === username)) {
-            return ctx.throw(403, `user ${username} already joined ${roomname}`);
+            ctx.status = 403;
+            ctx.body = { errors: `user ${username} already joined ${roomname}` };
+            return await next();
         }
 
         roomsInfo[roomname].users.push({ username });
-        io.emit('requested join room', roomname);
+
+        ctx.res.io.emit('requested join room', roomname);
 
         ctx.status = 200;
         ctx.body = roomsInfo[roomname];
@@ -53,7 +54,9 @@ exports.status = async (ctx, next) => {
         const secondsToRoomCreated = currentTime.diff(roomsInfo[roomname].created_at, 'seconds');
 
         if (!roomsInfo[roomname]) {
-            return ctx.throw(404, `room ${roomname} do not exists ):`);
+            ctx.status = 404;
+            ctx.body = { errors: `room ${roomname} do not exists ):` };
+            return await next();
         }
 
         ctx.status = 200;

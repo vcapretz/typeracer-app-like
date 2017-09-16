@@ -1,4 +1,5 @@
 node_modules
 api/node_modules
+api/coverage
 app/node_modules
 static/bundle.js
