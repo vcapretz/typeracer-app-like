@@ -1,4 +1,4 @@
 module.exports = {
     roomsInfo: {},
-    maxWordsPerGame: 100,
+    maxWordsPerGame: 200,
 };

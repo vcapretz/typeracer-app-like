@@ -14,6 +14,10 @@ function handleConnection(io) {
         });
 
         socket.on('disconnect', () => {
+            if (socket.room) {
+                socket.leave(socket.room);
+            }
+
             console.log('disconnected');
         });
     };

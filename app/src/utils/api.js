@@ -8,15 +8,6 @@ socket.on('requested join room', (roomname) => {
     socket.emit('enter room', roomname);
 });
 
-socket.on('user entered room', (msg) => {
-    if (msg.users.length >= 2) {
-        // enable button to start game
-        // the button will emit a message to room
-    }
-
-    console.log(msg);
-});
-
 export async function joinRoom(roomname, username) {
     let join;
 
@@ -30,3 +21,27 @@ export async function joinRoom(roomname, username) {
 }
 
 export default socket;
+
+export function waitNewUsers(callback) {
+    socket.on('user entered room', (msg) => {
+        callback(msg);
+    });
+}
+
+export function gameStatus(callback) {
+    socket.on('game status changed', (msg) => {
+        callback(msg);
+    });
+}
+
+export async function startCounter(roomname) {
+    let start;
+
+    try {
+        start = await axios.get(`${apiUrl}/room/${roomname}/start`);
+    } catch (e) {
+        throw e;
+    }
+
+    return start.data;
+}

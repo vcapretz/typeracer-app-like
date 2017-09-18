@@ -74,3 +74,31 @@ exports.status = async (ctx, next) => {
         ctx.throw(500, err);
     }
 };
+
+/**
+ * start  - Starts active time of room
+ * @returns {Object}  - Success/Error message
+ */
+exports.start = async (ctx, next) => {
+    try {
+        const { roomname } = ctx.params;
+        const currentTime = moment();
+
+        if (!roomsInfo[roomname]) {
+            ctx.status = 404;
+            ctx.body = { errors: `room ${roomname} do not exists ):` };
+            return await next();
+        }
+
+        roomsInfo[roomname].started_at = currentTime;
+
+        ctx.status = 200;
+        ctx.body = roomsInfo[roomname];
+
+        ctx.res.io.to(roomname).emit('game status changed', roomsInfo[roomname]);
+
+        await next();
+    } catch (err) {
+        ctx.throw(500, err);
+    }
+};

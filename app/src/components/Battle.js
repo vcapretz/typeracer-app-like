@@ -1,8 +1,6 @@
 import * as React from 'react';
 import * as PropTypes from 'prop-types';
 
-import * as api from '../utils/api';
-
 export default class Battle extends React.Component {
     static contextTypes = {
         router: PropTypes.object,
@@ -37,13 +35,7 @@ export default class Battle extends React.Component {
     async handleSubmit(event) {
         event.preventDefault();
 
-        api.joinRoom(this.state.roomname, this.state.username)
-            .then((data) => {
-                this.setState(() => ({ roomInfo: data }));
-            })
-            .catch(() => {
-                alert('Couldn\'t join room, try another username');
-            });
+        this.context.router.history.push(`/battle/type?username=${this.state.username}&roomname=${this.state.roomname}`);
     }
 
     render() {
@@ -57,28 +49,32 @@ export default class Battle extends React.Component {
             <div>
                 <div className="row">
                     <form className="column" onSubmit={this.handleSubmit}>
-                        <label className="header" htmlFor="roomname">What room you want to join?</label>
-                        <input
-                            id="roomname"
-                            placeholder="Room name"
-                            type="text"
-                            autoComplete="off"
-                            value={this.state.roomname}
-                            onChange={this.handleChangeRoomname}
-                        />
-                        <label className="header" htmlFor="username">What's your username?</label>
-                        <input
-                            id="username"
-                            placeholder="Username"
-                            type="text"
-                            autoComplete="off"
-                            value={this.state.username}
-                            onChange={this.handleChangeUsername}
-                        />
+                        <label className="header" htmlFor="roomname">{'What room you want to join?'}
+                            <input
+                                id="roomname"
+                                placeholder="Room name"
+                                type="text"
+                                autoComplete="off"
+                                value={this.state.roomname}
+                                onChange={this.handleChangeRoomname}
+                            />
+                        </label>
+                        <label className="header" htmlFor="username"> {'What\'s your username?'}
+                            <input
+                                id="username"
+                                placeholder="Username"
+                                type="text"
+                                autoComplete="off"
+                                value={this.state.username}
+                                onChange={this.handleChangeUsername}
+                            />
+                        </label>
+
                         <button
                             className="button"
                             type="submit"
-                            disabled={!this.state.username && this.state.roomname}>
+                            disabled={!this.state.username && this.state.roomname}
+                        >
                             Submit
                         </button>
                     </form>
