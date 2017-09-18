@@ -4,6 +4,7 @@ import * as PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
 
 import * as api from '../utils/api';
+import Loading from './commom/Loading';
 
 class TypeRoom extends React.Component {
     constructor(props) {
@@ -14,12 +15,33 @@ class TypeRoom extends React.Component {
             username: '',
             roomInfo: null,
             loading: true,
+            status: {
+                active_users: 0,
+                keystrokes: 0,
+                active_since: 0,
+                below_mean: 0,
+                ranking: [],
+                last_minute_lead: '',
+            },
         };
 
         this.handleClick = this.handleClick.bind(this);
         this.handleChange = this.handleChange.bind(this);
-        api.waitNewUsers(roomInfo => this.setState({ roomInfo }));
-        api.gameStatus(roomInfo => this.setState({ roomInfo }));
+        this.handleRefresh = this.handleRefresh.bind(this);
+
+        window.addEventListener('keydown', (e) => { // block ctrl + c and ctrl + v
+            if (e.ctrlKey && (e.key === 'c' || e.key === 'v')) {
+                e.preventDefault();
+                return false;
+            }
+
+            return true;
+        });
+
+        api.waitNewUsers(roomInfo => this
+            .setState(prevState => Object.assign(prevState, { roomInfo })));
+        api.gameStatus(roomInfo => this
+            .setState(prevState => Object.assign(prevState, { roomInfo })));
     }
 
     componentDidMount() {
@@ -32,6 +54,14 @@ class TypeRoom extends React.Component {
                     username: info.username,
                     roomInfo: data,
                     loading: false,
+                    status: {
+                        active_users: 0,
+                        keystrokes: 0,
+                        active_since: 0,
+                        below_mean: 0,
+                        ranking: [],
+                        last_minute_lead: '',
+                    },
                 }));
             })
             .catch(() => {
@@ -40,7 +70,20 @@ class TypeRoom extends React.Component {
                     username: '',
                     roomInfo: null,
                     loading: false,
+                    status: {
+                        active_users: 0,
+                        keystrokes: 0,
+                        active_since: 0,
+                        below_mean: 0,
+                        ranking: [],
+                        last_minute_lead: '',
+                    },
                 }));
+            });
+
+        api.refreshStatus(info.roomname)
+            .then((status) => {
+                this.setState({ status });
             });
     }
 
@@ -51,18 +94,59 @@ class TypeRoom extends React.Component {
             });
     }
 
-    handleChange() {
+    handleRefresh() {
+        api.refreshStatus(this.state.roomInfo.roomname)
+            .then((status) => {
+                this.setState({ status });
+            });
+    }
+
+    handleChange(e) {
+        const textValue = document.getElementById('typingArea').value;
+
         api.default.emit('user typing', {
-            text: document.querySelector('textarea').value,
+            key: e.key,
+            index: textValue.length,
+            roomname: this.state.roomInfo.roomname,
             username: this.state.username,
         });
+    }
+
+    renderStatusComponent() {
+        return (
+            <div>
+                <div className="column">
+                    <strong>Status:</strong>
+                    <ul className="status">
+                        <li>Users in room: {this.state.status.active_users}</li>
+                        <li>Keys typed: {this.state.status.keystrokes}</li>
+                        <li>Below mean: {this.state.status.below_mean}</li>
+                        <li>Last minute lead: {this.state.status.last_minute_lead}</li>
+                    </ul>
+                </div>
+                <div className="column">
+                    <strong>Ranking:</strong>
+                    <ul className="status">
+                        {this.state.status.ranking.map(user => (
+                            <li key={user[0]}>{user[0]} - {user[1]}</li>
+                        ))}
+                    </ul>
+                </div>
+                <button
+                    className="button"
+                    onClick={this.handleRefresh}
+                >
+                    Refresh
+                </button>
+            </div>
+        );
     }
 
     render() {
         const { loading, error } = this.state;
 
         if (loading) {
-            return <p>Loading...</p>;
+            return <Loading />;
         }
 
         if (error) {
@@ -89,27 +173,30 @@ class TypeRoom extends React.Component {
                                 <li key={user.username}>{user.username}</li>
                             ))}
                         </ul>
+                        {this.renderStatusComponent()}
                     </div>
                     <div className="column">
                         {roomInfo.text}
                     </div>
                     <div className="column">
                         <textarea
-                            onChange={this.handleChange}
+                            id="typingArea"
+                            onKeyDown={this.handleChange}
                             rows="10"
                             style={{ width: '90%' }}
                             disabled={roomInfo.started_at == null ? 'disabled' : ''}
                         />
                     </div>
                 </div>
-                <button
-                    className="button"
-                    hidden={roomInfo.started_at != null}
-                    disabled={roomInfo.users.length < 2}
-                    onClick={this.handleClick}
-                >
-                    Start!
-                </button>
+                {roomInfo.started_at == null &&
+                    <button
+                        className="button"
+                        disabled={roomInfo.users.length < 2 || roomInfo.started_at != null}
+                        onClick={this.handleClick}
+                    >
+                        Start!
+                    </button>
+                }
             </div>
         );
     }

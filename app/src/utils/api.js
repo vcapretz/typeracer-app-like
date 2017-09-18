@@ -45,3 +45,15 @@ export async function startCounter(roomname) {
 
     return start.data;
 }
+
+export async function refreshStatus(roomname) {
+    let status;
+
+    try {
+        status = await axios.get(`${apiUrl}/room/${roomname}/status`);
+    } catch (e) {
+        throw e;
+    }
+
+    return status.data;
+}

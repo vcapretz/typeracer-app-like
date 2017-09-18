@@ -1,3 +1,5 @@
+const moment = require('moment');
+
 const { roomsInfo } = require('./rooms-utils');
 
 function handleConnection(io) {
@@ -5,19 +7,25 @@ function handleConnection(io) {
         console.log('connected to socket');
 
         socket.on('enter room', (roomname) => {
-            if (socket.room && socket.room !== roomname) {
-                socket.leave(socket.room);
-            }
-
             socket.join(roomname);
             io.to(roomname).emit('user entered room', roomsInfo[roomname]);
         });
 
-        socket.on('disconnect', () => {
-            if (socket.room) {
-                socket.leave(socket.room);
-            }
+        socket.on('user typing', (newData) => {
+            const { roomname, username, key, index } = newData;
 
+            if (roomname && username && roomsInfo[roomname]) {
+                const userIndex = roomsInfo[roomname].users
+                    .findIndex(user => user.username === username);
+
+                if (userIndex >= 0) {
+                    roomsInfo[roomname].users[userIndex].typeHistory
+                        .push(Object.assign({}, { username, key, index, typed_at: moment() }));
+                }
+            }
+        });
+
+        socket.on('disconnect', () => { // on disconnect user already leaves channel
             console.log('disconnected');
         });
     };

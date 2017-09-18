@@ -63,6 +63,10 @@ a {
     list-style-type: none;
 }
 
+.status li {
+    list-style-type: none;
+}
+
 .home-container {
     display: flex;
     flex-direction: column;
