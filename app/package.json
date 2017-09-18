@@ -4,9 +4,10 @@
   "description": "TypeRacer APP ",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "npm run lint",
     "start": "webpack-dev-server --host 0.0.0.0",
-    "dev": "webpack-dev-server --open"
+    "dev": "webpack-dev-server --open",
+    "lint": "eslint ."
   },
   "repository": {
     "type": "git",
