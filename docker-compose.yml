@@ -15,10 +15,11 @@ services:
             - "8080:8080"
         environment:
             - API_URL=http://api:3000
+            - REACT_APP_API_URL=http://api:3000
         networks:
             - typeracer
         volumes:
             - "./app:/app"
-        entrypoint: "npm run start"
+        entrypoint: "npm run dev"
 networks:
     typeracer:

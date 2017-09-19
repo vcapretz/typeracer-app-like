@@ -1,5 +1,5 @@
-node_modules
 api/node_modules
 api/coverage
+
 app/node_modules
-app/dist
+app/build

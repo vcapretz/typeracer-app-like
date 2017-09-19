@@ -19,7 +19,7 @@ Enjoy it! 🎊
 
 ## Live demo
 
-For a live demo, access the url:
+For a live demo, access the url: https://typeracer-app.now.sh/
 
 It was deployed using [now](https://zeit.co/now)
 

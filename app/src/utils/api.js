@@ -1,7 +1,7 @@
 import openSocket from 'socket.io-client';
 import * as axios from 'axios';
 
-const apiUrl = process.env.API_URL || 'http://localhost:3000';
+const apiUrl = process.env.REACT_APP_API_URL || 'http://localhost:3000';
 const socket = openSocket(apiUrl);
 
 socket.on('requested join room', (roomname) => {

@@ -6,4 +6,4 @@ services:
             - "8080:8080"
         volumes:
             - "./dist:/app/dist"
-        entrypoint: "npm run start"
+        entrypoint: "npm run dev"

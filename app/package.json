@@ -5,8 +5,9 @@
   "main": "index.js",
   "scripts": {
     "test": "npm run lint",
-    "start": "webpack-dev-server --host 0.0.0.0",
-    "dev": "webpack-dev-server --open",
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "dev": "webpack-dev-server --host 0.0.0.0",
     "lint": "eslint ."
   },
   "repository": {
@@ -32,6 +33,7 @@
     "react": "^15.6.1",
     "react-dom": "^15.6.1",
     "react-router-dom": "^4.2.2",
+    "react-scripts": "^1.0.13",
     "socket.io-client": "^2.0.3",
     "webpack": "^3.6.0",
     "webpack-dev-server": "^2.8.2"

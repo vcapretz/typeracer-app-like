@@ -4,7 +4,7 @@ import 'babel-polyfill';
 
 import App from './components/App';
 
-require('./index.css');
+require('./assets/stylesheets/index.css');
 require('./utils/api');
 
 ReactDOM.render(
