@@ -1,0 +1,5 @@
+{
+    "env": {
+        "API_URL": "https://typeracer-api.now.sh/"
+    }
+}

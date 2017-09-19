@@ -1,9 +1,8 @@
+import * as React from 'react';
+import * as ReactDOM from 'react-dom';
 import 'babel-polyfill';
 
 import App from './components/App';
-
-const React = require('react');
-const ReactDOM = require('react-dom');
 
 require('./index.css');
 require('./utils/api');

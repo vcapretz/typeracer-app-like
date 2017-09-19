@@ -10,9 +10,18 @@ Starting the game enables users to type the shown text (random size, random word
 
 The room doesn't have a game-ending, so people can join and leave anytime. If you keep playing your average score should improve and your ranking will be better.
 
+#### Score
 The ranking is calculted by dividing the correct keys typed per total time typing.
 
+The formula is: `countTotalCorrectKeysPressed / (timeBetweenFirstAndLastKeyPressed)` (the time in milliseconds)
+
 Enjoy it! 🎊
+
+## Live demo
+
+For a live demo, access the url:
+
+It was deployed using [now](https://zeit.co/now)
 
 ## The stack
 

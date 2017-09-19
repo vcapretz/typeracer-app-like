@@ -27,7 +27,6 @@ class TypeRoom extends React.Component {
 
         this.handleClick = this.handleClick.bind(this);
         this.handleChange = this.handleChange.bind(this);
-        this.handleRefresh = this.handleRefresh.bind(this);
 
         window.addEventListener('keydown', (e) => { // block ctrl + c and ctrl + v
             if (e.ctrlKey && (e.key === 'c' || e.key === 'v')) {
@@ -94,13 +93,6 @@ class TypeRoom extends React.Component {
             });
     }
 
-    handleRefresh() {
-        api.refreshStatus(this.state.roomInfo.roomname)
-            .then((status) => {
-                this.setState({ status });
-            });
-    }
-
     handleChange(e) {
         const textValue = document.getElementById('typingArea').value;
 
@@ -110,6 +102,11 @@ class TypeRoom extends React.Component {
             roomname: this.state.roomInfo.roomname,
             username: this.state.username,
         });
+
+        api.refreshStatus(this.state.roomInfo.roomname)
+            .then((status) => {
+                this.setState({ status });
+            });
     }
 
     renderStatusComponent() {
